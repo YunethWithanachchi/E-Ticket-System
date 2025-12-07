@@ -11,7 +11,7 @@
         android:layout_width="119dp"
         android:layout_height="89dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/baseline_qr_code_scanner_24"
         app:layout_constraintBottom_toBottomOf="@+id/bottomView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

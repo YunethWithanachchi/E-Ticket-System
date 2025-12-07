@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="ProfileController"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
@@ -10,8 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@tools:sample/avatars"
-        tools:layout_editor_absoluteX="140dp"
-        tools:layout_editor_absoluteY="174dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2"
+        app:layout_constraintVertical_bias="0.186" />
 
     <View
         android:id="@+id/view2"
@@ -38,51 +42,81 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/nameTxt"
         android:layout_width="279dp"
         android:layout_height="34dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="66dp"
-        tools:layout_editor_absoluteY="366dp" />
+        android:layout_marginTop="32dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/idTxt"
         android:layout_width="279dp"
         android:layout_height="34dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="66dp"
-        tools:layout_editor_absoluteY="408dp" />
+        android:layout_marginBottom="308dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameTxt"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/triptxt"
         android:layout_width="146dp"
         android:layout_height="30dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="490dp" />
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="208dp"
+        android:text="No. of Trips : "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idTxt" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/triptxt2"
         android:layout_width="146dp"
         android:layout_height="30dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="199dp"
-        tools:layout_editor_absoluteY="490dp" />
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="70dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.014"
+        app:layout_constraintStart_toEndOf="@+id/triptxt"
+        app:layout_constraintTop_toBottomOf="@+id/idTxt"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tickettxt"
         android:layout_width="146dp"
         android:layout_height="30dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="568dp" />
+        android:layout_marginBottom="132dp"
+        android:text="Tickets Taken : "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/triptxt"
+        app:layout_constraintVertical_bias="0.978" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tickettxt2"
         android:layout_width="146dp"
         android:layout_height="30dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="199dp"
-        tools:layout_editor_absoluteY="568dp" />
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="132dp"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tickettxt"
+        app:layout_constraintTop_toBottomOf="@+id/triptxt2"
+        app:layout_constraintVertical_bias="0.978" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
