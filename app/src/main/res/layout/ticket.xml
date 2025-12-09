@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="19dp"
-    tools:context="TicketController">
+    tools:context=".controller.TicketController">
 
     <View
         android:id="@+id/view"

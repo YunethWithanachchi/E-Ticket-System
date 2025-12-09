@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
+import com.example.busetiko.controller.HistoryController
+import com.example.busetiko.controller.ProfileController
+import com.example.busetiko.controller.TicketController
+import com.example.busetiko.controller.WalletController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -20,20 +24,22 @@ class MainActivity : AppCompatActivity() {
         val scanBtn = findViewById<FloatingActionButton>(R.id.ScanButton)
 
         ticketBtn.setOnClickListener {
-            val intent = Intent(this,TicketController::class.java)
+            val intent = Intent(this, TicketController::class.java)
             startActivity(intent)
         }
 
         historyBtn.setOnClickListener {
-            Toast.makeText(this, "History Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,HistoryController::class.java)
+            startActivity(intent)
         }
 
         walletBtn.setOnClickListener {
-            val intent = Intent(this,WalletController::class.java)
+            val intent = Intent(this, WalletController::class.java)
             startActivity(intent)        }
 
         profileBtn.setOnClickListener {
-            Toast.makeText(this, "Profile Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,ProfileController::class.java)
+            startActivity(intent)
         }
 
         scanBtn.setOnClickListener {

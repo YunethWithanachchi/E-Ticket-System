@@ -21,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".controller.TicketController"></activity>
+        <activity android:name=".controller.WalletController"></activity>
+        <activity android:name=".controller.HistoryController"></activity>
+        <activity android:name=".controller.ProfileController"></activity>
     </application>
 
 </manifest>
