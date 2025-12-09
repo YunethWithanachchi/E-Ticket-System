@@ -44,4 +44,21 @@ class DBHelper
             e.printStackTrace()
         }
     }
+
+    fun getDropPointsByRoute(route:Int):List<String>{
+        val dropPointsList = mutableListOf<String>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT DROP_POINTS FROM BUS WHERE ROUTE = ?", arrayOf(route.toString())
+        )
+        if (cursor.moveToFirst()){
+            val dropPoints = cursor.getString(0)
+            dropPointsList.addAll(
+                dropPoints.split(",").map { it.trim() }
+            )
+        }
+        cursor.close()
+        db.close()
+        return dropPointsList
+    }
 }
