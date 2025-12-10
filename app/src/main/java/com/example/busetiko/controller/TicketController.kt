@@ -19,18 +19,29 @@ class TicketController : Activity() {
         val db = DBHelper(this)
         val dropPoints = db.getDropPointsByRoute(busRoute)
 
+        val numbers = (1..10).toList()
+
         val fromSpinner = findViewById<Spinner>(R.id.fromSpinner)
         val toSpinner = findViewById<Spinner>(R.id.toSpinner)
+        val ticketCount = findViewById<Spinner>(R.id.ticketSpinner)
 
         val adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
             dropPoints
         )
+        val adapter2 = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            numbers
+        )
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
         fromSpinner.adapter = adapter
         toSpinner.adapter = adapter
+        ticketCount.adapter = adapter2
     }
 
 }
