@@ -3,8 +3,10 @@ package com.example.busetiko
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.concurrent.thread
 
 class DBHelper
     (private val context: Context) : SQLiteOpenHelper(context,"Bus_Ticket",null,1)
@@ -14,11 +16,11 @@ class DBHelper
         const val SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INT, DROP_POINTS TEXT)"
         const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME
 
-        const val FARE_TABLE = "Fare"
+        const val FARE_TABLE = "fare_sections"
         const val SQL_CREATE_FARE_TABLE = "CREATE TABLE " + FARE_TABLE+"(SECTION_COUNT INT, FARE DOUBLE)"
         const val SQL_DELETE_FARE_TABLE = "DROP TABLE IF EXISTS "+ FARE_TABLE
 
-        const val ROUTE_TABLE = "ROUTE_101"
+        const val ROUTE_TABLE = "ROUTE_TABLE"
         const val SQL_CREATE_ROUTE_TABLE_101 = "CREATE TABLE " + ROUTE_TABLE+"(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
         const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS "+ ROUTE_TABLE
     }
@@ -40,6 +42,7 @@ class DBHelper
     }
 
     private fun runInsertScript(db: SQLiteDatabase,fileName : String){
+        db.beginTransaction()
         try{
             val inputStream = context.applicationContext.assets.open(fileName)
             val reader = BufferedReader(InputStreamReader(inputStream))
@@ -48,13 +51,20 @@ class DBHelper
             while (reader.readLine().also { line = it }!= null){
                 val query = line!!.trim()
                 if (query.isNotEmpty()){
-                    db.execSQL(query)
+                    try {
+                        db.execSQL(query)
+                    }catch (e:Exception){
+                        Log.e("DBHelper","Failed SQL : $query",e)
+                    }
                 }
             }
+            db.setTransactionSuccessful()
             reader.close()
             inputStream.close()
         }catch (e: Exception){
             e.printStackTrace()
+        }finally {
+            db.endTransaction()
         }
     }
 

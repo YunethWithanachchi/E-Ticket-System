@@ -14,7 +14,7 @@ class TicketController : Activity() {
 
         val busId = "B001"
         val busNo = "NA - 2323"
-        val busRoute = 101
+        val busRoute = 138
 
         val db = DBHelper(this)
         val dropPoints = db.getDropPointsByRoute(busRoute)
