@@ -9,29 +9,31 @@ import java.io.InputStreamReader
 import kotlin.concurrent.thread
 
 class DBHelper
-    (private val context: Context) : SQLiteOpenHelper(context,"Bus_Ticket",null,1)
-{
-    companion object{
+    (private val context: Context) : SQLiteOpenHelper(context,"Bus_Ticket",null,1) {
+    companion object {
         const val TABLE_NAME = "Bus"
-        const val SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INT, DROP_POINTS TEXT)"
+        const val SQL_CREATE_ENTRIES =
+            "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INT, DROP_POINTS TEXT)"
         const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME
 
         const val FARE_TABLE = "fare_sections"
-        const val SQL_CREATE_FARE_TABLE = "CREATE TABLE " + FARE_TABLE+"(SECTION_COUNT INT, FARE DOUBLE)"
-        const val SQL_DELETE_FARE_TABLE = "DROP TABLE IF EXISTS "+ FARE_TABLE
+        const val SQL_CREATE_FARE_TABLE =
+            "CREATE TABLE " + FARE_TABLE + "(SECTION_COUNT INT, FARE DOUBLE)"
+        const val SQL_DELETE_FARE_TABLE = "DROP TABLE IF EXISTS " + FARE_TABLE
 
         const val ROUTE_TABLE = "ROUTE_TABLE"
-        const val SQL_CREATE_ROUTE_TABLE_101 = "CREATE TABLE " + ROUTE_TABLE+"(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
-        const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS "+ ROUTE_TABLE
+        const val SQL_CREATE_ROUTE_TABLE_101 =
+            "CREATE TABLE " + ROUTE_TABLE + "(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
+        const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS " + ROUTE_TABLE
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_ENTRIES)
         db.execSQL(SQL_CREATE_FARE_TABLE)
         db.execSQL(SQL_CREATE_ROUTE_TABLE_101)
-        runInsertScript(db,"insert_bus.sql")
-        runInsertScript(db,"fareVsSections.sql")
-        runInsertScript(db,"routes.sql")
+        runInsertScript(db, "insert_bus.sql")
+        runInsertScript(db, "fareVsSections.sql")
+        runInsertScript(db, "routes.sql")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -41,47 +43,73 @@ class DBHelper
         onCreate(db)
     }
 
-    private fun runInsertScript(db: SQLiteDatabase,fileName : String){
+    private fun runInsertScript(db: SQLiteDatabase, fileName: String) {
         db.beginTransaction()
-        try{
+        try {
             val inputStream = context.applicationContext.assets.open(fileName)
             val reader = BufferedReader(InputStreamReader(inputStream))
 
             var line: String?
-            while (reader.readLine().also { line = it }!= null){
+            while (reader.readLine().also { line = it } != null) {
                 val query = line!!.trim()
-                if (query.isNotEmpty()){
+                if (query.isNotEmpty()) {
                     try {
                         db.execSQL(query)
-                    }catch (e:Exception){
-                        Log.e("DBHelper","Failed SQL : $query",e)
+                    } catch (e: Exception) {
+                        Log.e("DBHelper", "Failed SQL : $query", e)
                     }
                 }
             }
             db.setTransactionSuccessful()
             reader.close()
             inputStream.close()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-        }finally {
+        } finally {
             db.endTransaction()
         }
     }
 
-    fun getDropPointsByRoute(route:Int):List<String>{
+    fun getDropPointsByRoute(route: Int): List<String> {
         val dropPointsList = mutableListOf<String>()
         val db = this.readableDatabase
         val cursor = db.rawQuery(
             "SELECT DROP_POINTS FROM BUS WHERE ROUTE = ?", arrayOf(route.toString())
         )
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             val dropPoints = cursor.getString(0)
             dropPointsList.addAll(
                 dropPoints.split(",").map { it.trim() }
             )
         }
         cursor.close()
-        db.close()
         return dropPointsList
     }
+
+    fun getSectionNo(routeNo: Int, location: String): Int? {
+        val db = readableDatabase
+        var section: Int? = null
+        val cursor = db.rawQuery(
+            "SELECT SECTION FROM ROUTE_TABLE WHERE ROUTE_NO = ? AND LOCATION = ?",
+            arrayOf(routeNo.toString(), location)
+        )
+        if (cursor.moveToFirst()) {
+            section = cursor.getInt(0)
+        }
+        cursor.close()
+        return section
+    }
+
+
+    fun getFareForSections(sectionDifference: Int): Double? {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT FARE FROM fare_sections WHERE SECTION_COUNT = ?",
+            arrayOf(sectionDifference.toString())
+        )
+        val fare = if (cursor.moveToFirst()) cursor.getDouble(0) else 0.0
+        cursor.close()
+        return fare
+    }
+
 }

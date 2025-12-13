@@ -2,28 +2,37 @@ package com.example.busetiko.controller
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
 import com.example.busetiko.DBHelper
 import com.example.busetiko.R
 
 class TicketController : Activity() {
+
+    private lateinit var fromSpinner: Spinner
+    private lateinit var toSpinner: Spinner
+    private lateinit var ticketCount: Spinner
+    private lateinit var db: DBHelper
+    val routeNo = 138
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ticket)
 
         val busId = "B001"
         val busNo = "NA - 2323"
-        val busRoute = 138
 
-        val db = DBHelper(this)
-        val dropPoints = db.getDropPointsByRoute(busRoute)
+
+        db = DBHelper(this)
+        val dropPoints = db.getDropPointsByRoute(routeNo)
 
         val numbers = (1..10).toList()
 
-        val fromSpinner = findViewById<Spinner>(R.id.fromSpinner)
-        val toSpinner = findViewById<Spinner>(R.id.toSpinner)
-        val ticketCount = findViewById<Spinner>(R.id.ticketSpinner)
+        fromSpinner = findViewById(R.id.fromSpinner)
+        toSpinner = findViewById(R.id.toSpinner)
+        ticketCount = findViewById(R.id.ticketSpinner)
 
         val adapter = ArrayAdapter(
             this,
@@ -42,6 +51,65 @@ class TicketController : Activity() {
         fromSpinner.adapter = adapter
         toSpinner.adapter = adapter
         ticketCount.adapter = adapter2
+
+        //Setting Listeners to the dropdowns
+
+        fromSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                showFare()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        toSpinner.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                showFare()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        ticketCount.onItemSelectedListener =object :AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                showFare()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
+    fun showFare(){
+        val from = fromSpinner.selectedItem?.toString()?:return
+        val to = toSpinner.selectedItem?.toString()?:return
+        val count = ticketCount.selectedItem.toString().toIntOrNull()
+
+        val fare = (count?.let { calculateFare(routeNo,from,to)?.times(it) })
+        val fareTxt = findViewById<TextView>(R.id.amountTxt)
+        fareTxt.text = String.format("%.2f",fare)
+    }
+    fun calculateFare(routeNo: Int, from: String, to: String): Double? {
+        val fromSectionNo = db.getSectionNo(routeNo,from)
+        val toSectionNo = db.getSectionNo(routeNo,to)
+
+        if (fromSectionNo!=null && toSectionNo!=null) {
+            val sectionDifference = kotlin.math.abs(toSectionNo-fromSectionNo)
+            return db.getFareForSections(sectionDifference)
+        }
+        return null
+    }
+
 
 }
