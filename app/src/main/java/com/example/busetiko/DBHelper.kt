@@ -13,16 +13,29 @@ class DBHelper
         const val TABLE_NAME = "Bus"
         const val SQL_CREATE_ENTRIES = "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INT, DROP_POINTS TEXT)"
         const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME
-    }
 
+        const val FARE_TABLE = "Fare"
+        const val SQL_CREATE_FARE_TABLE = "CREATE TABLE " + FARE_TABLE+"(SECTION_COUNT INT, FARE DOUBLE)"
+        const val SQL_DELETE_FARE_TABLE = "DROP TABLE IF EXISTS "+ FARE_TABLE
+
+        const val ROUTE_TABLE = "ROUTE_101"
+        const val SQL_CREATE_ROUTE_TABLE_101 = "CREATE TABLE " + ROUTE_TABLE+"(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
+        const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS "+ ROUTE_TABLE
+    }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_ENTRIES)
+        db.execSQL(SQL_CREATE_FARE_TABLE)
+        db.execSQL(SQL_CREATE_ROUTE_TABLE_101)
         runInsertScript(db,"insert_bus.sql")
+        runInsertScript(db,"fareVsSections.sql")
+        runInsertScript(db,"routes.sql")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL(SQL_DELETE_ENTRIES)
+        db.execSQL(SQL_DELETE_FARE_TABLE)
+        db.execSQL(SQL_DELETE_ROUTE_TABLE_101)
         onCreate(db)
     }
 
