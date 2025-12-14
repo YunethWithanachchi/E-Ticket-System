@@ -25,6 +25,17 @@ class DBHelper
         const val SQL_CREATE_ROUTE_TABLE_101 =
             "CREATE TABLE " + ROUTE_TABLE + "(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
         const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS " + ROUTE_TABLE
+
+        const  val USER_TABLE = "USERS"
+        const val SQL_CREATE_USER_TABLE = "CREATE TABLE "+ USER_TABLE+"(USER_ID TEXT PRIMARY KEY, USERNAME TEXT, EMAIL TEXT," +
+                "TOURS_TRAVELLED INT,TICKET_BOUGHT INT,WALLET DOUBLE)"
+        const val SQL_DELETE_USER_TABLE = "DROP TABLE IF EXISTS "+ USER_TABLE
+
+        const val TICKET_TABLE  = "TICKET"
+        const val SQL_CREATE_TICKET_TABLE = "CREATE TABLE "+ TICKET_TABLE+"(TICKET_ID INT PRIMARY KEY AUTOINCREMENT,USER_ID TEXT,BUS_NO TEXT," +
+                " DATE_TIME TEXT, WHERE_TO TEXT, WHERE_FROM TEXT,ROUTE_NO INT,TICKET_COUNT INT, PRICE DOUBLE,FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)\n)"
+        const val SQL_DELETE_TICKET_TABLE = "DROP TABLE IF EXISTS "+ TICKET_TABLE
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -34,12 +45,16 @@ class DBHelper
         runInsertScript(db, "insert_bus.sql")
         runInsertScript(db, "fareVsSections.sql")
         runInsertScript(db, "routes.sql")
+        db.execSQL(SQL_CREATE_USER_TABLE)
+        db.execSQL(SQL_CREATE_TICKET_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL(SQL_DELETE_ENTRIES)
         db.execSQL(SQL_DELETE_FARE_TABLE)
         db.execSQL(SQL_DELETE_ROUTE_TABLE_101)
+        db.execSQL(SQL_DELETE_USER_TABLE)
+        db.execSQL(SQL_DELETE_TICKET_TABLE)
         onCreate(db)
     }
 
