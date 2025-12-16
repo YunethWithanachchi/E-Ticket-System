@@ -13,27 +13,27 @@ class DBHelper
     companion object {
         const val TABLE_NAME = "Bus"
         const val SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INT, DROP_POINTS TEXT)"
+            "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INTEGER, DROP_POINTS TEXT)"
         const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME
 
         const val FARE_TABLE = "fare_sections"
         const val SQL_CREATE_FARE_TABLE =
-            "CREATE TABLE " + FARE_TABLE + "(SECTION_COUNT INT, FARE DOUBLE)"
+            "CREATE TABLE " + FARE_TABLE + "(SECTION_COUNT INTEGER, FARE DOUBLE)"
         const val SQL_DELETE_FARE_TABLE = "DROP TABLE IF EXISTS " + FARE_TABLE
 
         const val ROUTE_TABLE = "ROUTE_TABLE"
         const val SQL_CREATE_ROUTE_TABLE_101 =
-            "CREATE TABLE " + ROUTE_TABLE + "(ROUTE_NO INT,LOCATION TEXT, SECTION INT)"
+            "CREATE TABLE " + ROUTE_TABLE + "(ROUTE_NO INTEGER,LOCATION TEXT, SECTION INTEGER)"
         const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS " + ROUTE_TABLE
 
         const  val USER_TABLE = "USERS"
         const val SQL_CREATE_USER_TABLE = "CREATE TABLE "+ USER_TABLE+"(USER_ID TEXT PRIMARY KEY, USERNAME TEXT, EMAIL TEXT," +
-                "TOURS_TRAVELLED INT,TICKET_BOUGHT INT,WALLET DOUBLE)"
+                "TOURS_TRAVELLED INTEGER,TICKET_BOUGHT INTEGER,WALLET DOUBLE)"
         const val SQL_DELETE_USER_TABLE = "DROP TABLE IF EXISTS "+ USER_TABLE
 
         const val TICKET_TABLE  = "TICKET"
-        const val SQL_CREATE_TICKET_TABLE = "CREATE TABLE "+ TICKET_TABLE+"(TICKET_ID INT PRIMARY KEY AUTOINCREMENT,USER_ID TEXT,BUS_NO TEXT," +
-                " DATE_TIME TEXT, WHERE_TO TEXT, WHERE_FROM TEXT,ROUTE_NO INT,TICKET_COUNT INT, PRICE DOUBLE,FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)\n)"
+        const val SQL_CREATE_TICKET_TABLE = "CREATE TABLE "+ TICKET_TABLE+"(TICKET_ID INTEGER PRIMARY KEY AUTOINCREMENT,USER_ID TEXT,BUS_NO TEXT," +
+                " DATE_TIME TEXT, WHERE_TO TEXT, WHERE_FROM TEXT,ROUTE_NO INTEGER,TICKET_COUNT INTEGER, PRICE DOUBLE,FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)\n)"
         const val SQL_DELETE_TICKET_TABLE = "DROP TABLE IF EXISTS "+ TICKET_TABLE
 
     }
@@ -56,6 +56,13 @@ class DBHelper
         db.execSQL(SQL_DELETE_USER_TABLE)
         db.execSQL(SQL_DELETE_TICKET_TABLE)
         onCreate(db)
+    }
+
+    override fun onConfigure(db: SQLiteDatabase?) {
+        super.onConfigure(db)
+        if (db != null) {
+            db.setForeignKeyConstraintsEnabled(true)
+        }
     }
 
     private fun runInsertScript(db: SQLiteDatabase, fileName: String) {
