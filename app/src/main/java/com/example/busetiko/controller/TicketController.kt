@@ -36,14 +36,15 @@ class TicketController : Activity() {
 
         busId = intent.getStringExtra("BUS_ID")?:""
         busNo = intent.getStringExtra("BUS_NO")?:""
-        route = intent.getStringExtra("ROUTE")?:""
+        route = (intent.getStringExtra("ROUTE")?:"")
         findViewById<TextView>(R.id.busIdTxt).setText(busId)
         findViewById<TextView>(R.id.busNoTxt).setText(busNo)
         findViewById<TextView>(R.id.routeTxt).setText(route)
 
 
         db = DBHelper(this)
-        val dropPoints = db.getDropPointsByRoute(route.toInt())
+        val routeNo = route.toInt()
+        val dropPoints = db.getDropPointsByRoute(routeNo)
 
         val numbers = (1..10).toList()
 

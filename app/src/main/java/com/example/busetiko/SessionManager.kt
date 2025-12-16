@@ -1,7 +1,7 @@
 package com.example.busetiko
 
 object SessionManager{
-        var userId: String? = null
-        var userName: String? = null
+        var userId = "U001"
+        var userName = "Yuneth"
         var email: String? = null
 }

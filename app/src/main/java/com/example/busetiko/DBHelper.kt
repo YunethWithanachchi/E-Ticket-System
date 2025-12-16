@@ -43,11 +43,12 @@ class DBHelper
         db.execSQL(SQL_CREATE_ENTRIES)
         db.execSQL(SQL_CREATE_FARE_TABLE)
         db.execSQL(SQL_CREATE_ROUTE_TABLE_101)
+        db.execSQL(SQL_CREATE_USER_TABLE)
+        db.execSQL(SQL_CREATE_TICKET_TABLE)
         runInsertScript(db, "insert_bus.sql")
         runInsertScript(db, "fareVsSections.sql")
         runInsertScript(db, "routes.sql")
-        db.execSQL(SQL_CREATE_USER_TABLE)
-        db.execSQL(SQL_CREATE_TICKET_TABLE)
+        runInsertScript(db, "tempFile.sql")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -137,11 +138,14 @@ class DBHelper
     fun getUserWalletBalance(userId:String):Double{
         var balance = 0.0
         val db = readableDatabase
+        Log.d("DB_CHECK", "Fetching wallet for userId: $userId")
 
         val cursor = db.rawQuery(
             "SELECT WALLET FROM USERS WHERE USER_ID = ?",
             arrayOf(userId)
         )
+        Log.d("DB_CHECK", "Rows found: ${cursor.count}")
+
         if (cursor.moveToFirst()){balance=cursor.getDouble(0)}
         cursor.close()
         return balance
