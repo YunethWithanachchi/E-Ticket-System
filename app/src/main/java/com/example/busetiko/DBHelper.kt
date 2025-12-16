@@ -1,5 +1,6 @@
 package com.example.busetiko
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -122,7 +123,6 @@ class DBHelper
         return section
     }
 
-
     fun getFareForSections(sectionDifference: Int): Double? {
         val db = readableDatabase
         val cursor = db.rawQuery(
@@ -134,4 +134,25 @@ class DBHelper
         return fare
     }
 
+    fun getUserWalletBalance(userId:String):Double{
+        var balance = 0.0
+        val db = readableDatabase
+
+        val cursor = db.rawQuery(
+            "SELECT WALLET FROM USERS WHERE USER_ID = ?",
+            arrayOf(userId)
+        )
+        if (cursor.moveToFirst()){balance=cursor.getDouble(0)}
+        cursor.close()
+        return balance
+    }
+
+    fun updateUserWallet(userId: String,newBalance:Double){
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put("WALLET",newBalance)
+        }
+        db.update("USERS",values,"USER_ID = ?", arrayOf(userId))
+    }
 }
