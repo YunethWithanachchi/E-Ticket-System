@@ -43,7 +43,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         scanBtn.setOnClickListener {
-            Toast.makeText(this, "Scan Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,ScanQrActivity::class.java)
+            startActivity(intent)
         }
     }
 
