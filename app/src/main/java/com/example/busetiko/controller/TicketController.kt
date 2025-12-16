@@ -16,17 +16,25 @@ class TicketController : Activity() {
     private lateinit var toSpinner: Spinner
     private lateinit var ticketCount: Spinner
     private lateinit var db: DBHelper
-    val routeNo = 138
+
+    private lateinit var busId:String
+    private lateinit var busNo:String
+    private lateinit var route:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ticket)
 
-        val busId = "B001"
-        val busNo = "NA - 2323"
+        busId = intent.getStringExtra("BUS_ID")?:""
+        busNo = intent.getStringExtra("BUS_NO")?:""
+        route = intent.getStringExtra("ROUTE")?:""
+        findViewById<TextView>(R.id.busIdTxt).setText(busId)
+        findViewById<TextView>(R.id.busNoTxt).setText(busNo)
+        findViewById<TextView>(R.id.routeTxt).setText(route)
 
 
         db = DBHelper(this)
-        val dropPoints = db.getDropPointsByRoute(routeNo)
+        val dropPoints = db.getDropPointsByRoute(route.toInt())
 
         val numbers = (1..10).toList()
 
@@ -96,7 +104,7 @@ class TicketController : Activity() {
         val to = toSpinner.selectedItem?.toString()?:return
         val count = ticketCount.selectedItem.toString().toIntOrNull()
 
-        val fare = (count?.let { calculateFare(routeNo,from,to)?.times(it) })
+        val fare = (count?.let { calculateFare(route.toInt(),from,to)?.times(it) })
         val fareTxt = findViewById<TextView>(R.id.amountTxt)
         fareTxt.text = String.format("%.2f",fare)
     }
