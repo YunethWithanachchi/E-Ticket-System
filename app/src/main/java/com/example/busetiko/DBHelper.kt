@@ -4,9 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Bundle
 import android.util.Log
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.concurrent.thread
 
 class DBHelper
@@ -33,8 +36,9 @@ class DBHelper
         const val SQL_DELETE_USER_TABLE = "DROP TABLE IF EXISTS "+ USER_TABLE
 
         const val TICKET_TABLE  = "TICKET"
-        const val SQL_CREATE_TICKET_TABLE = "CREATE TABLE "+ TICKET_TABLE+"(TICKET_ID INTEGER PRIMARY KEY AUTOINCREMENT,USER_ID TEXT,BUS_NO TEXT," +
-                " DATE_TIME TEXT, WHERE_TO TEXT, WHERE_FROM TEXT,ROUTE_NO INTEGER,TICKET_COUNT INTEGER, PRICE DOUBLE,FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)\n)"
+        const val SQL_CREATE_TICKET_TABLE = "CREATE TABLE "+ TICKET_TABLE+"(TICKET_ID INTEGER PRIMARY KEY AUTOINCREMENT,USER_ID TEXT,BUS_ID TEXT,BUS_NO TEXT," +
+                " DATE_TIME TEXT, WHERE_TO TEXT, WHERE_FROM TEXT,ROUTE_NO INTEGER,TICKET_COUNT INTEGER, PRICE DOUBLE,FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID)," +
+                "FOREIGN KEY (BUS_ID) REFERENCES BUS(ID)\n)"
         const val SQL_DELETE_TICKET_TABLE = "DROP TABLE IF EXISTS "+ TICKET_TABLE
 
     }
@@ -158,5 +162,64 @@ class DBHelper
             put("WALLET",newBalance)
         }
         db.update("USERS",values,"USER_ID = ?", arrayOf(userId))
+    }
+
+    fun addTicket(userId: String,busId: String, busNo: String, date: String, to: String, from: String,
+                  route: Int, count: String, amount: Double): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("USER_ID",userId)
+            put("BUS_ID",busId)
+            put("BUS_NO",busNo)
+            put("DATE_TIME",date)
+            put("WHERE_TO",to)
+            put("WHERE_FROM",from)
+            put("ROUTE_NO",route)
+            put("TICKET_COUNT",count)
+            put("PRICE",amount)
+        }
+        val result = db.insert(TICKET_TABLE,null,values) // result get the type as a long
+        return result!=-1L //an error gives -1 long, so we say to return true if its not -1L
+    }
+
+    fun lookActiveTicket(userId: String): Bundle? {
+        val db= readableDatabase
+        val cursor = db.rawQuery("""SELECT * FROM TICKET WHERE USER_ID = ? 
+                ORDER BY DATE_TIME DESC 
+                LIMIT 1""".trimIndent(),
+                arrayOf(userId)
+        ) // """ allows multiline o/w if we use " we have to use ""+"" when we go multiline
+
+        var activeTicketDetails: Bundle?=null
+        if (cursor.moveToFirst()){
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val dateString =cursor.getString(cursor.getColumnIndexOrThrow("DATE_TIME"))
+            val ticketTimeMillis = formatter.parse(dateString)?.time ?: 0L
+            val currentTime = System.currentTimeMillis()
+
+            if (currentTime - ticketTimeMillis <= 60 * 60 * 1000) {
+                activeTicketDetails = Bundle().apply {
+                    putString("TICKET_ID",
+                        cursor.getString(cursor.getColumnIndexOrThrow("TICKET_ID")))
+                    putString("BUS_ID",
+                        cursor.getString(cursor.getColumnIndexOrThrow("BUS_ID")))
+                    putString("BUS_NO",
+                        cursor.getString(cursor.getColumnIndexOrThrow("BUS_NO")))
+                    putString("FROM_STOP",
+                        cursor.getString(cursor.getColumnIndexOrThrow("FROM_STOP")))
+                    putString("TO_STOP",
+                        cursor.getString(cursor.getColumnIndexOrThrow("TO_STOP")))
+                    putDouble("FARE",
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("PRICE")))
+                    putString("ROUTE_NO",
+                        cursor.getString(cursor.getColumnIndexOrThrow("ROUTE_NO")))
+                    putString("TICKET_COUNT",
+                        cursor.getString(cursor.getColumnIndexOrThrow("TICKET_COUNT")))
+                    putString("TICKET_TIME", dateString)
+                }
+            }
+        }
+        cursor.close()
+        return activeTicketDetails
     }
 }

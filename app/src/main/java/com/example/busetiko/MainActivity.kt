@@ -24,8 +24,12 @@ class MainActivity : AppCompatActivity() {
         val scanBtn = findViewById<FloatingActionButton>(R.id.ScanButton)
 
         ticketBtn.setOnClickListener {
-            val intent = Intent(this, TicketController::class.java)
-            startActivity(intent)
+            val ticketBundle = DBHelper(this).lookActiveTicket(SessionManager.userId)
+            if (ticketBundle==null) {
+                Toast.makeText(this, "No active ticket. Please scan QR.", Toast.LENGTH_SHORT).show()
+            }else{
+                activeTicketAvailable(ticketBundle)
+            }
         }
 
         historyBtn.setOnClickListener {
@@ -46,6 +50,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,ScanQrActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun activeTicketAvailable(ticketBundle: Bundle) {
+        val intent = Intent(this,TicketController::class.java)
+        intent.putExtra("ticketDetails",ticketBundle)
+        intent.putExtra("isScanned",false)
+        startActivity(intent)
     }
 
 }

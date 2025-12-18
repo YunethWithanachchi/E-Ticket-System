@@ -1,6 +1,5 @@
 package com.example.busetiko
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,7 +20,6 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.busetiko.controller.TicketController
-import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -158,7 +156,7 @@ class ScanQrActivity : AppCompatActivity() {
         val busId = dataMap["BUS_ID"]
         val busNo = dataMap["BUS_NO"]
         val route = dataMap["ROUTE"]
-        goToTicketCOntroller(busId,busNo,route)
+        goToTicketController(busId,busNo,route)
     }
 
     private fun vibratePhone(){
@@ -176,11 +174,12 @@ class ScanQrActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToTicketCOntroller(busId: String?, busNo: String?, route: String?) {
+    private fun goToTicketController(busId: String?, busNo: String?, route: String?) {
         val intent = Intent(this,TicketController::class.java)
         intent.putExtra("BUS_ID",busId)
         intent.putExtra("BUS_NO",busNo)
         intent.putExtra("ROUTE",route)
+        intent.putExtra("isScanned",true)
         startActivity(intent)
         finish() //🔥stop camera activity
     }
