@@ -45,11 +45,11 @@ class TicketController : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ticket)
-        paybtn  = findViewById<Button>(R.id.payBtn)
-        fareTxt = findViewById<TextView>(R.id.amountTxt)
-        busIdUI = findViewById<TextView>(R.id.busIdTxt)
-        busNoUI = findViewById<TextView>(R.id.busNoTxt)
-        routeUI = findViewById<TextView>(R.id.routeTxt)
+        paybtn  = findViewById(R.id.payBtn)
+        fareTxt = findViewById(R.id.amountTxt)
+        busIdUI = findViewById(R.id.busIdTxt)
+        busNoUI = findViewById(R.id.busNoTxt)
+        routeUI = findViewById(R.id.routeTxt)
         fromSpinner = findViewById(R.id.fromSpinner)
         toSpinner = findViewById(R.id.toSpinner)
         ticketCount = findViewById(R.id.ticketSpinner)
@@ -224,6 +224,7 @@ class TicketController : Activity() {
             val result = db.addTicket(SessionManager.userId,busId,busNo,date,to,from,route.toInt(),count,amount)
             if (result){
                 db.updateUserWallet(SessionManager.userId,newBalance)
+                db.updateUserStat(count.toInt(),SessionManager.userId)
                 showSuccessDialog(newBalance);
             }
         }else{

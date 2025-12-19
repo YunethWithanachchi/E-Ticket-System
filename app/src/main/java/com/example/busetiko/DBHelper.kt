@@ -262,4 +262,53 @@ class DBHelper
         val db = writableDatabase
         db.delete("TICKET","TICKET_ID=?", arrayOf(ticketNo))
     }
+
+    fun updateUserStat(count: Int,userId: String) {
+        val oldTicketsCount = getTicketBought(userId)
+        val newCount = oldTicketsCount+count
+        val oldToursCount = getToursTravelled(userId)
+        val newTourCount =oldToursCount + 1
+
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("TICKET_BOUGHT",newCount)
+            put("TOURS_TRAVELLED",newTourCount)
+        }
+        db.update("USERS",values,"USER_ID = ?", arrayOf(userId))
+
+    }
+    fun getTicketBought(userId: String):Int{
+        val db = readableDatabase
+        var ticketBought = 0
+
+        val cursor = db.rawQuery(
+            "SELECT TICKET_BOUGHT FROM USERS WHERE USER_ID = ?",
+            arrayOf(userId)
+        )
+
+        if (cursor.moveToFirst()) {
+            ticketBought = cursor.getInt(
+                cursor.getColumnIndexOrThrow("TICKET_BOUGHT")
+            )
+        }
+        cursor.close()
+        return ticketBought
+    }
+    fun getToursTravelled(userId: String):Int{
+        val db = readableDatabase
+        var toursTravelled = 0
+
+        val cursor = db.rawQuery(
+            "SELECT TOURS_TRAVELLED FROM USERS WHERE USER_ID = ?",
+            arrayOf(userId)
+        )
+
+        if (cursor.moveToFirst()) {
+            toursTravelled = cursor.getInt(
+                cursor.getColumnIndexOrThrow("TOURS_TRAVELLED")
+            )
+        }
+        cursor.close()
+        return toursTravelled
+    }
 }
