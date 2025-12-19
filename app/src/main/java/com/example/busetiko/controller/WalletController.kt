@@ -26,7 +26,7 @@ class WalletController :Activity() {
             finish()
             return
         }
-        val balance = db.getUserWalletBalance("U001")
+        val balance = db.getUserWalletBalance(userId)
         balanceTxt.text = balance.toString()
 
         findViewById<Button>(R.id.rechargeBtn).setOnClickListener{

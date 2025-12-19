@@ -8,13 +8,15 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ScanButton"
-        android:layout_width="119dp"
-        android:layout_height="89dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:src="@drawable/baseline_qr_code_scanner_24"
         app:layout_constraintBottom_toBottomOf="@+id/bottomView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:fabSize="normal" /> <!-- ensures proper circle size -->
+
 
     <TextView
         android:id="@+id/textView"

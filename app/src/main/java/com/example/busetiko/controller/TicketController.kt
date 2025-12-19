@@ -194,13 +194,15 @@ class TicketController : Activity() {
     }
     fun showFare(){
         if (paybtn.text == "Paid") return
-        from = fromSpinner.selectedItem?.toString()?:return
-        to = toSpinner.selectedItem?.toString()?:return
-        count = ticketCount.selectedItem.toString()
+        from = fromSpinner.selectedItem?.toString() ?: return
+        to = toSpinner.selectedItem?.toString() ?: return
+        count = ticketCount.selectedItem?.toString() ?: "1"
 
-        val fare = (count.toInt()?.let { calculateFare(route.toInt(),from,to)?.times(it) })
-        fareTxt.text = String.format("%.2f",fare)
+        val fareValue = calculateFare(route.toInt(), from, to) ?: 0.0
+        val totalFare = fareValue * count.toInt()
+        fareTxt.text = String.format("%.2f", totalFare)
     }
+
     fun calculateFare(routeNo: Int, from: String, to: String): Double? {
         val fromSectionNo = db.getSectionNo(routeNo,from)
         val toSectionNo = db.getSectionNo(routeNo,to)
