@@ -7,7 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class HistoryAdapter(
-    private val ticketList: List<TicketHistory>
+    private val ticketList: MutableList<TicketHistory>,
+    private val onDelete: (TicketHistory,Int) ->Unit
 ):RecyclerView.Adapter<HistoryAdapter.TicketViewHolder>() {
     inner class TicketViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         val txtTicketId: TextView =itemView.findViewById(R.id.txtTicketId)
@@ -16,6 +17,17 @@ class HistoryAdapter(
         val txtTo: TextView = itemView.findViewById(R.id.txtTo)
         val txtDate: TextView = itemView.findViewById(R.id.txtDate)
         val txtPrice: TextView = itemView.findViewById(R.id.txtPrice)
+
+        init {
+            //Long press listener
+            itemView.setOnLongClickListener{
+                val position = adapterPosition
+                if (position!=RecyclerView.NO_POSITION){
+                    onDelete(ticketList[position],position)
+                }
+                true
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TicketViewHolder {

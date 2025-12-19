@@ -258,4 +258,8 @@ class DBHelper
         cursor.close()
         return ticketList
     }
+    fun deleteTicket(ticketNo:String){
+        val db = writableDatabase
+        db.delete("TICKET","TICKET_ID=?", arrayOf(ticketNo))
+    }
 }
