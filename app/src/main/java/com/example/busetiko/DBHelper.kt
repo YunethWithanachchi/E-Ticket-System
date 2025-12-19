@@ -15,9 +15,9 @@ import kotlin.concurrent.thread
 class DBHelper
     (private val context: Context) : SQLiteOpenHelper(context,"Bus_Ticket",null,1) {
     companion object {
-        const val TABLE_NAME = "Bus"
+        const val TABLE_NAME = "BUS"
         const val SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + "(ID TEXT, " + "NO TEXT, ROUTE INTEGER, DROP_POINTS TEXT)"
+            "CREATE TABLE " + TABLE_NAME + "(ID TEXT PRIMARY KEY, " + "NO TEXT, ROUTE INTEGER, DROP_POINTS TEXT)"
         const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME
 
         const val FARE_TABLE = "fare_sections"
@@ -206,9 +206,9 @@ class DBHelper
                     putString("BUS_NO",
                         cursor.getString(cursor.getColumnIndexOrThrow("BUS_NO")))
                     putString("FROM_STOP",
-                        cursor.getString(cursor.getColumnIndexOrThrow("FROM_STOP")))
+                        cursor.getString(cursor.getColumnIndexOrThrow("WHERE_FROM")))
                     putString("TO_STOP",
-                        cursor.getString(cursor.getColumnIndexOrThrow("TO_STOP")))
+                        cursor.getString(cursor.getColumnIndexOrThrow("WHERE_TO")))
                     putDouble("FARE",
                         cursor.getDouble(cursor.getColumnIndexOrThrow("PRICE")))
                     putString("ROUTE_NO",

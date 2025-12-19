@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -49,6 +50,10 @@ class TicketController : Activity() {
         busIdUI = findViewById<TextView>(R.id.busIdTxt)
         busNoUI = findViewById<TextView>(R.id.busNoTxt)
         routeUI = findViewById<TextView>(R.id.routeTxt)
+        fromSpinner = findViewById(R.id.fromSpinner)
+        toSpinner = findViewById(R.id.toSpinner)
+        ticketCount = findViewById(R.id.ticketSpinner)
+        db = DBHelper(this)
 
         isScanned = intent.getBooleanExtra("isScanned",false)
 
@@ -63,15 +68,10 @@ class TicketController : Activity() {
         busNoUI.text = busNo
         routeUI.text = route
 
-        db = DBHelper(this)
         val routeNo = route.toInt()
         val dropPoints = db.getDropPointsByRoute(routeNo)
 
         val numbers = (1..10).toList()
-
-        fromSpinner = findViewById(R.id.fromSpinner)
-        toSpinner = findViewById(R.id.toSpinner)
-        ticketCount = findViewById(R.id.ticketSpinner)
 
         val adapter = ArrayAdapter(
             this,
@@ -131,7 +131,7 @@ class TicketController : Activity() {
         }
 
         paybtn.setOnClickListener{
-            val amount = fareTxt.text.toString().toDouble()?:0.0
+            val amount = fareTxt.text.toString().toDoubleOrNull()?:0.0
             if (amount==0.0){
                 Toast.makeText(this,"Invalid Destinations",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -145,8 +145,8 @@ class TicketController : Activity() {
         }
     }
     private fun loadTicket(){
-        val ticketDetails = intent.extras //intent.extras refer to Bundle
-
+        val extras= intent.extras //intent.extras refer to Bundle
+        val ticketDetails = extras?.getBundle("ticketDetails")
         //Extras are used when getting data that has been passed to the UI from another
         //the thing we have done here is we have taken the bundle(Key-Value Container)
         //that was passed from the previous UI and retrieved its contents below
@@ -155,38 +155,45 @@ class TicketController : Activity() {
             busNo =ticketDetails.getString("BUS_NO")?:""
             route =ticketDetails.getString("ROUTE_NO")?:""
             count = ticketDetails.getString("TICKET_COUNT")?:""
-            fareTxt.text = ticketDetails.getString("FARE")
+            fareTxt.text = String.format("%.2f", ticketDetails.getDouble("FARE"))
+
             busIdUI.text = busId
             busNoUI.text = busNo
             routeUI.text = route
 
-            setSpinnerValue(fromSpinner,ticketDetails.getString("FROM_STOP")?:"")
-            setSpinnerValue(toSpinner,ticketDetails.getString("TO_STOP")?:"")
-            setSpinnerValue(ticketCount,ticketDetails.getString("TICKET_COUNT")?:"")
+            fromSpinner.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                listOf(ticketDetails.getString("FROM_STOP") ?: "")
+            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+            toSpinner.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                listOf(ticketDetails.getString("TO_STOP") ?: "")
+            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
+            ticketCount.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                listOf(ticketDetails.getString("TICKET_COUNT") ?: "")
+            ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+
             fromSpinner.isEnabled = false
             toSpinner.isEnabled = false
             ticketCount.isEnabled = false
 
             paybtn.text = "Paid"
             paybtn.isEnabled = false
-            paybtn.background = ContextCompat.getDrawable(this, R.drawable.paid_button_bg)
-            paybtn.setTextColor(Color.WHITE)
+            //paybtn.background = ContextCompat.getDrawable(this, R.drawable.paid_button_bg)
+            paybtn.setTextColor(Color.GREEN)
+
         }
 
 
-    }
-    fun setSpinnerValue(spinner: Spinner,value: String){
-        // our spinner will respond to ny spinner adapter
-        val adapter = spinner.adapter ?: return
-
-        for (i in 0 until adapter.count) {
-            if (adapter.getItem(i).toString() == value) {
-                spinner.setSelection(i)
-                break
-            }
-        }
     }
     fun showFare(){
+        if (paybtn.text == "Paid") return
         from = fromSpinner.selectedItem?.toString()?:return
         to = toSpinner.selectedItem?.toString()?:return
         count = ticketCount.selectedItem.toString()
