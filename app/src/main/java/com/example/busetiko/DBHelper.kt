@@ -222,4 +222,40 @@ class DBHelper
         cursor.close()
         return activeTicketDetails
     }
+
+    //Going to use data objects here to pass data, unlike using bundles in the above methods
+    fun getTicketHistory(userId: String):List<TicketHistory>{
+        val ticketList = ArrayList<TicketHistory>()
+        val db = readableDatabase
+
+        val query = """ SELECT TICKET_ID, WHERE_FROM,WHERE_TO,ROUTE_NO,
+            DATE_TIME,PRICE FROM TICKET
+            WHERE USER_ID = ?
+            ORDER BY DATE_TIME DESC 
+            """
+        val cursor = db.rawQuery(query, arrayOf(userId))
+        if (cursor.moveToFirst()) {
+            do {
+                val ticketNo = cursor.getString(cursor.getColumnIndexOrThrow("TICKET_ID"))
+                val from = cursor.getString(cursor.getColumnIndexOrThrow("WHERE_FROM"))
+                val to = cursor.getString(cursor.getColumnIndexOrThrow("WHERE_TO"))
+                val route = cursor.getInt(cursor.getColumnIndexOrThrow("ROUTE_NO"))
+                val date = cursor.getString(cursor.getColumnIndexOrThrow("DATE_TIME"))
+                val price = cursor.getDouble(cursor.getColumnIndexOrThrow("PRICE"))
+
+                val ticket = TicketHistory(
+                    ticketNo = ticketNo,
+                    from = from,
+                    to = to,
+                    route = route,
+                    date = date,
+                    price = price
+                )
+                ticketList.add(ticket)
+
+            }while (cursor.moveToNext())
+        }
+        cursor.close()
+        return ticketList
+    }
 }
