@@ -31,7 +31,7 @@ class DBHelper
         const val SQL_DELETE_ROUTE_TABLE_101 = "DROP TABLE IF EXISTS " + ROUTE_TABLE
 
         const  val USER_TABLE = "USERS"
-        const val SQL_CREATE_USER_TABLE = "CREATE TABLE "+ USER_TABLE+"(USER_ID TEXT PRIMARY KEY, USERNAME TEXT, EMAIL TEXT," +
+        const val SQL_CREATE_USER_TABLE = "CREATE TABLE "+ USER_TABLE+"(USER_ID TEXT PRIMARY KEY, USERNAME TEXT, EMAIL TEXT,PASSWORD TEXT," +
                 "TOURS_TRAVELLED INTEGER,TICKET_BOUGHT INTEGER,WALLET DOUBLE)"
         const val SQL_DELETE_USER_TABLE = "DROP TABLE IF EXISTS "+ USER_TABLE
 
@@ -74,29 +74,29 @@ class DBHelper
     private fun runInsertScript(db: SQLiteDatabase, fileName: String) {
         db.beginTransaction()
         try {
-            val inputStream = context.applicationContext.assets.open(fileName)
-            val reader = BufferedReader(InputStreamReader(inputStream))
+            val inputStream = context.assets.open(fileName)
+            val script = inputStream.bufferedReader().use { it.readText() }
 
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                val query = line!!.trim()
-                if (query.isNotEmpty()) {
+            script
+                .split(";")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .forEach { sql ->
                     try {
-                        db.execSQL(query)
+                        db.execSQL(sql)
                     } catch (e: Exception) {
-                        Log.e("DBHelper", "Failed SQL : $query", e)
+                        Log.e("DBHelper", "Failed SQL : $sql", e)
                     }
                 }
-            }
+
             db.setTransactionSuccessful()
-            reader.close()
-            inputStream.close()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("DBHelper", "Error running insert script: $fileName", e)
         } finally {
             db.endTransaction()
         }
     }
+
 
     fun getDropPointsByRoute(route: Int): List<String> {
         val dropPointsList = mutableListOf<String>()
@@ -311,4 +311,56 @@ class DBHelper
         cursor.close()
         return toursTravelled
     }
+
+    fun insertUser(
+        userId: String,
+        username: String,
+        email: String,
+        password: String,
+        toursTravelled: Int,
+        ticketsBought: Int,
+        wallet: Double
+    ): Boolean {
+
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("USER_ID", userId)
+            put("USERNAME", username)
+            put("EMAIL", email)
+            put("PASSWORD", password)
+            put("TOURS_TRAVELLED", toursTravelled)
+            put("TICKET_BOUGHT", ticketsBought)
+            put("WALLET", wallet)
+        }
+
+        val result = db.insert("USERS", null, values)
+        return result != -1L
+    }
+
+    fun getUserByUserNameAndPassword(
+        userName: String,
+        password: String
+    ): Triple<String, String, String>? {
+
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT USER_ID, USERNAME, EMAIL FROM USERS WHERE USERNAME = ? AND PASSWORD = ?",
+            arrayOf(userName, password)
+        )
+
+        val user =
+            if (cursor.moveToFirst()) {
+                Triple(
+                    cursor.getString(cursor.getColumnIndexOrThrow("USER_ID")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("USERNAME")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("EMAIL"))
+                )
+            } else {
+                null
+            }
+
+        cursor.close()
+        return user
+    }
+
 }

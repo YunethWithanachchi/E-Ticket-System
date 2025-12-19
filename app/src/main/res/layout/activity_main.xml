@@ -20,7 +20,7 @@
         android:id="@+id/textView"
         android:layout_width="406dp"
         android:layout_height="73dp"
-        android:background="#BF124D"
+        android:background="#354eb5"
         android:text="Bus E-Tiko"
         android:textSize="28dp"
         android:textStyle="bold"
@@ -103,7 +103,7 @@
         android:id="@+id/bottomView"
         android:layout_width="408dp"
         android:layout_height="85dp"
-        android:background="#BF124D"
+        android:background="#354eb5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

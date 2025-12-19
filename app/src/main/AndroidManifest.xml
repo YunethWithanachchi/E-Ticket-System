@@ -20,7 +20,7 @@
         android:theme="@style/Theme.BusETiko"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".controller.LoginController"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".controller.TicketController"></activity>
         <activity android:name=".controller.WalletController"></activity>
         <activity android:name=".controller.HistoryController"></activity>
         <activity android:name=".controller.ProfileController"></activity>
+        <activity android:name=".controller.RegisterController"></activity>
         <activity android:name=".ScanQrActivity" android:screenOrientation="portrait">
         </activity>
     </application>

@@ -30,7 +30,7 @@
         android:layout_width="406dp"
         android:layout_height="73dp"
         android:layout_marginBottom="3dp"
-        android:background="#BF124D"
+        android:background="#354eb5"
         android:text="Bus E-Tiko"
         android:textSize="28dp"
         android:textStyle="bold"

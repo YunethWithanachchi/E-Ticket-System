@@ -11,7 +11,7 @@
         android:id="@+id/headerTxt"
         android:layout_width="match_parent"
         android:layout_height="73dp"
-        android:background="#BF124D"
+        android:background="#354eb5"
         android:text="Bus E-Tiko"
         android:textSize="28dp"
         android:textStyle="bold"
